@@ -25,6 +25,12 @@ export const createTruck = async (payload: CreateTruckPayload): Promise<Truck> =
   return res.json();
 };
 
+export const fetchTruck = async (truckId: string): Promise<Truck> => {
+  const res = await fetch(`${API_URL}/trucks/${truckId}`);
+  if (!res.ok) throw new Error("Failed to fetch truck");
+  return res.json();
+};
+
 export const deleteTruck = async (truckId: string): Promise<void> => {
   const res = await fetch(`${API_URL}/trucks/${truckId}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete truck");

@@ -10,7 +10,11 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 m
 
 const errorClass = "mt-1 text-xs text-red-500 dark:text-red-400";
 
-export const AddTruck = () => {
+interface AddTruckProps {
+  onSuccess?: () => void;
+}
+
+export const AddTruck = ({ onSuccess }: AddTruckProps) => {
   const addTruck = useAddTruck();
 
   const {
@@ -27,7 +31,12 @@ export const AddTruck = () => {
   });
 
   const onSubmit = (data: TruckFormData) => {
-    addTruck.mutate(data, { onSuccess: () => reset() });
+    addTruck.mutate(data, {
+      onSuccess: () => {
+        reset();
+        onSuccess?.();
+      },
+    });
   };
 
   return (

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Truck, TruckStatus } from "@/types/truck";
 import { useDeleteTruck } from "@/hooks/trucks";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -59,11 +60,21 @@ const renderRows = (
 
   return trucks.map((truck) => (
     <tr key={truck.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-      <td className="px-4 py-3 font-mono text-gray-700 dark:text-gray-200 font-medium">
-        {truck.code}
+      <td className="px-4 py-3 font-mono font-medium">
+        <Link
+          to={`/trucks/${truck.id}`}
+          className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          {truck.code}
+        </Link>
       </td>
-      <td className="px-4 py-3 text-gray-800 dark:text-gray-200">
-        {truck.name}
+      <td className="px-4 py-3">
+        <Link
+          to={`/trucks/${truck.id}`}
+          className="text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          {truck.name}
+        </Link>
       </td>
       <td className="px-4 py-3">
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[truck.status]}`}>
