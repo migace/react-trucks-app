@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Truck, TruckStatus } from "@/types/truck";
+import { useDeleteTruck } from "@/hooks/trucks";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 const STATUS_STYLES: Record<TruckStatus, string> = {
   OUT_OF_SERVICE: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
@@ -31,12 +34,15 @@ const SkeletonRow = () => (
 
 interface TrucksListProps {
   trucks: Truck[];
-  onDelete: (truckId: string) => void;
   isLoading: boolean;
   isError: boolean;
 }
 
-const renderRows = (trucks: Truck[], onDelete: (id: string) => void, isLoading: boolean) => {
+const renderRows = (
+  trucks: Truck[],
+  onDeleteClick: (truck: Truck) => void,
+  isLoading: boolean
+) => {
   if (isLoading) {
     return SKELETON_ROW_KEYS.map((key) => <SkeletonRow key={key} />);
   }
@@ -69,7 +75,7 @@ const renderRows = (trucks: Truck[], onDelete: (id: string) => void, isLoading: 
       </td>
       <td className="px-4 py-3 text-right">
         <button
-          onClick={() => onDelete(truck.id)}
+          onClick={() => onDeleteClick(truck)}
           className="text-sm font-medium text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
         >
           Delete
@@ -79,37 +85,59 @@ const renderRows = (trucks: Truck[], onDelete: (id: string) => void, isLoading: 
   ));
 };
 
-export const TrucksList = ({ trucks = [], onDelete, isLoading, isError }: TrucksListProps) => (
-  <section>
-    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-      Fleet {!isLoading && `(${trucks.length})`}
-    </h2>
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-      {isError ? (
-        <div className="py-16 text-center text-red-500 dark:text-red-400 text-sm">
-          Failed to load trucks. Please try again.
+export const TrucksList = ({ trucks = [], isLoading, isError }: TrucksListProps) => {
+  const deleteTruck = useDeleteTruck();
+  const [pendingTruck, setPendingTruck] = useState<Truck | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (!pendingTruck) return;
+    deleteTruck.mutate(pendingTruck.id, { onSettled: () => setPendingTruck(null) });
+  };
+
+  return (
+    <>
+      <section>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          Fleet {!isLoading && `(${trucks.length})`}
+        </h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {isError ? (
+            <div className="py-16 text-center text-red-500 dark:text-red-400 text-sm">
+              Failed to load trucks. Please try again.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                    {COLUMNS.map((col) => (
+                      <th
+                        key={col}
+                        className={`px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider ${col === "Actions" ? "text-right" : "text-left"}`}
+                      >
+                        {col}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {renderRows(trucks, setPendingTruck, isLoading)}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                {COLUMNS.map((col) => (
-                  <th
-                    key={col}
-                    className={`px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider ${col === "Actions" ? "text-right" : "text-left"}`}
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {renderRows(trucks, onDelete, isLoading)}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  </section>
-);
+      </section>
+
+      <ConfirmDialog
+        isOpen={pendingTruck !== null}
+        title="Delete Truck"
+        message={`Are you sure you want to delete "${pendingTruck?.name} (${pendingTruck?.code})"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        isPending={deleteTruck.isPending}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setPendingTruck(null)}
+      />
+    </>
+  );
+};

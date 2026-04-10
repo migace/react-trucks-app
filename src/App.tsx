@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { TrucksList } from "@/components/TrucksList";
 import { AddTruck } from "@/components/AddTruck";
-import { useTrucks, useDeleteTruck } from "@/hooks/trucks";
+import { useTrucks } from "@/hooks/trucks";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
 
   const { data: trucks = [], isLoading, isError } = useTrucks();
-  const deleteTruck = useDeleteTruck();
 
   return (
     <div className={darkMode ? "dark" : ""}>
@@ -49,7 +48,6 @@ function App() {
             <AddTruck />
             <TrucksList
               trucks={trucks}
-              onDelete={(id) => deleteTruck.mutate(id)}
               isLoading={isLoading}
               isError={isError}
             />
