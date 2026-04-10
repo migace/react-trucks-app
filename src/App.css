@@ -1,12 +1,2 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-table,
-th,
-td {
-  border: 1px solid;
-}
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
