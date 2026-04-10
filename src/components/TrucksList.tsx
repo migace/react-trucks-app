@@ -1,4 +1,11 @@
-export const TrucksList = ({ trucks = [], onDelete }) => (
+import { Truck } from "../types/truck";
+
+interface TrucksListProps {
+  trucks: Truck[];
+  onDelete: (truckId: string) => void;
+}
+
+export const TrucksList = ({ trucks = [], onDelete }: TrucksListProps) => (
   <table>
     <thead>
       <tr>
