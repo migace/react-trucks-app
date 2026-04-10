@@ -1,55 +1,36 @@
-import { useEffect, useState } from "react";
-import { TrucksList } from "./components/TrucksList";
-import { AddTruck } from "./components/AddTruck";
-import { Truck } from "./types/truck";
-
-const API_URL = "http://qa-api-mock-3.eu-central-1.elasticbeanstalk.com";
+import { useState } from "react";
+import { TrucksList } from "@/components/TrucksList";
+import { AddTruck } from "@/components/AddTruck";
+import { TruckStatus } from "@/types/truck";
+import { useTrucks, useAddTruck, useDeleteTruck } from "@/hooks/trucks";
 
 function App() {
-  const [trucks, setTrucks] = useState<Truck[]>([]);
   const [darkMode, setDarkMode] = useState(false);
 
-  const onDeleteTruckClickHandler = async (truckId: string) => {
-    const res = await fetch(`${API_URL}/trucks/${truckId}`, { method: "DELETE" });
-    if (res.status === 200) {
-      setTrucks((prevTrucks) => prevTrucks.filter((truck) => truck.id !== truckId));
-    }
-  };
+  const { data: trucks = [], isLoading, isError } = useTrucks();
+  const addTruck = useAddTruck();
+  const deleteTruck = useDeleteTruck();
 
-  const onSubmitClickHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitClickHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const form = event.currentTarget.elements as typeof event.currentTarget.elements & {
+    const form = event.currentTarget;
+    const elements = form.elements as typeof form.elements & {
       name: HTMLInputElement;
       code: HTMLInputElement;
       status: HTMLSelectElement;
       description: HTMLTextAreaElement;
     };
 
-    const res = await fetch(`${API_URL}/trucks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name.value,
-        code: form.code.value,
-        status: form.status.value,
-        description: form.description.value,
-      }),
-    });
-    const data: Truck = await res.json();
-    if (data.id) {
-      setTrucks((prevTrucks) => [...prevTrucks, data]);
-    }
+    addTruck.mutate(
+      {
+        name: elements.name.value,
+        code: elements.code.value,
+        status: elements.status.value as TruckStatus,
+        description: elements.description.value,
+      },
+      { onSuccess: () => form.reset() }
+    );
   };
-
-  useEffect(() => {
-    const loadTrucks = async () => {
-      const res = await fetch(`${API_URL}/trucks`);
-      const data: Truck[] = await res.json();
-      setTrucks(data);
-    };
-    loadTrucks();
-  }, []);
 
   return (
     <div className={darkMode ? "dark" : ""}>
@@ -88,8 +69,13 @@ function App() {
           </header>
 
           <div className="space-y-8">
-            <AddTruck onSubmit={onSubmitClickHandler} />
-            <TrucksList trucks={trucks} onDelete={onDeleteTruckClickHandler} />
+            <AddTruck onSubmit={onSubmitClickHandler} isPending={addTruck.isPending} />
+            <TrucksList
+              trucks={trucks}
+              onDelete={(id) => deleteTruck.mutate(id)}
+              isLoading={isLoading}
+              isError={isError}
+            />
           </div>
 
         </div>

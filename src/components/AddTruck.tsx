@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import { TruckStatus } from "../types/truck";
+import { TruckStatus } from "@/types/truck";
 
 const TRUCK_STATUSES: TruckStatus[] = [
   "OUT_OF_SERVICE",
@@ -16,9 +16,10 @@ const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 m
 
 interface AddTruckProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  isPending: boolean;
 }
 
-export const AddTruck = ({ onSubmit }: AddTruckProps) => (
+export const AddTruck = ({ onSubmit, isPending }: AddTruckProps) => (
   <section>
     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
       Add New Truck
@@ -70,9 +71,10 @@ export const AddTruck = ({ onSubmit }: AddTruckProps) => (
         <div className="sm:col-span-2 flex justify-end pt-2">
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium px-6 py-2 rounded-lg transition-colors shadow-sm"
+            disabled={isPending}
+            className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors shadow-sm"
           >
-            Add Truck
+            {isPending ? "Adding..." : "Add Truck"}
           </button>
         </div>
       </form>
