@@ -1,36 +1,13 @@
 import { useState } from "react";
 import { TrucksList } from "@/components/TrucksList";
 import { AddTruck } from "@/components/AddTruck";
-import { TruckStatus } from "@/types/truck";
-import { useTrucks, useAddTruck, useDeleteTruck } from "@/hooks/trucks";
+import { useTrucks, useDeleteTruck } from "@/hooks/trucks";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
 
   const { data: trucks = [], isLoading, isError } = useTrucks();
-  const addTruck = useAddTruck();
   const deleteTruck = useDeleteTruck();
-
-  const onSubmitClickHandler = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const elements = form.elements as typeof form.elements & {
-      name: HTMLInputElement;
-      code: HTMLInputElement;
-      status: HTMLSelectElement;
-      description: HTMLTextAreaElement;
-    };
-
-    addTruck.mutate(
-      {
-        name: elements.name.value,
-        code: elements.code.value,
-        status: elements.status.value as TruckStatus,
-        description: elements.description.value,
-      },
-      { onSuccess: () => form.reset() }
-    );
-  };
 
   return (
     <div className={darkMode ? "dark" : ""}>
@@ -69,7 +46,7 @@ function App() {
           </header>
 
           <div className="space-y-8">
-            <AddTruck onSubmit={onSubmitClickHandler} isPending={addTruck.isPending} />
+            <AddTruck />
             <TrucksList
               trucks={trucks}
               onDelete={(id) => deleteTruck.mutate(id)}
