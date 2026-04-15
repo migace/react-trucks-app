@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -19,14 +19,49 @@ export const ConfirmDialog = ({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [isOpen, onCancel]);
+    if (isOpen) {
+      cancelRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      if (e.key === "Escape") {
+        onCancel();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (!focusable || focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [isOpen, onCancel],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   if (!isOpen) return null;
 
@@ -38,6 +73,7 @@ export const ConfirmDialog = ({
         aria-hidden="true"
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
@@ -54,6 +90,7 @@ export const ConfirmDialog = ({
         </p>
         <div className="mt-6 flex justify-end gap-3">
           <button
+            ref={cancelRef}
             onClick={onCancel}
             disabled={isPending}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"

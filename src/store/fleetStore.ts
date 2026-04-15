@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { TruckStatus } from "@/types/truck";
 
 export type StatusFilter = TruckStatus | "ALL";
@@ -10,9 +11,17 @@ interface FleetStore {
   setStatusFilter: (filter: StatusFilter) => void;
 }
 
-export const useFleetStore = create<FleetStore>((set) => ({
-  darkMode: false,
-  toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-  statusFilter: "ALL",
-  setStatusFilter: (filter) => set({ statusFilter: filter }),
-}));
+export const useFleetStore = create<FleetStore>()(
+  persist(
+    (set) => ({
+      darkMode: false,
+      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+      statusFilter: "ALL",
+      setStatusFilter: (filter) => set({ statusFilter: filter }),
+    }),
+    {
+      name: "fleet-store",
+      partialize: (state) => ({ darkMode: state.darkMode }),
+    },
+  ),
+);

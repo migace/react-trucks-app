@@ -4,6 +4,7 @@ import { Layout } from "@/components/Layout";
 import { FleetPage } from "@/pages/FleetPage";
 import { AddTruckPage } from "@/pages/AddTruckPage";
 import { TruckDetailPage } from "@/pages/TruckDetailPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 const AiPage = lazy(() =>
   import("@/pages/AiPage").then((m) => ({ default: m.AiPage })),
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: "trucks/new", element: <AddTruckPage /> },
       { path: "trucks/:id", element: <TruckDetailPage /> },
       { path: "ai", element: <AiPageWithSuspense /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);

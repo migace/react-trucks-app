@@ -1,18 +1,7 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { useTruck } from "@/hooks/trucks";
-import { TruckStatus } from "@/types/truck";
-
-const STATUS_STYLES: Record<TruckStatus, string> = {
-  OUT_OF_SERVICE:
-    "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
-  LOADING:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  TO_JOB: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  AT_JOB:
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  RETURNING:
-    "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-};
+import { cn } from "@/lib/cn";
+import { STATUS_STYLES } from "@/lib/truckStatus";
 
 const DetailRow = ({
   label,
@@ -31,7 +20,14 @@ const DetailRow = ({
 
 export const TruckDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: truck, isLoading, isError } = useTruck(id!);
+
+  if (!id) return <Navigate to="/" replace />;
+
+  return <TruckDetail id={id} />;
+};
+
+const TruckDetail = ({ id }: { id: string }) => {
+  const { data: truck, isLoading, isError } = useTruck(id);
 
   return (
     <div>
@@ -45,6 +41,7 @@ export const TruckDetailPage = () => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -58,11 +55,11 @@ export const TruckDetailPage = () => {
 
       {isLoading && (
         <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          {[...new Array(4)].map((_, i) => (
+          {[40, 60, 30, 70].map((width, i) => (
             <div
               key={i}
               className="h-5 animate-pulse rounded bg-gray-200 dark:bg-gray-700"
-              style={{ width: `${[40, 60, 30, 70][i]}%` }}
+              style={{ width: `${width}%` }}
             />
           ))}
         </div>
@@ -87,7 +84,10 @@ export const TruckDetailPage = () => {
                 </p>
               </div>
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[truck.status]}`}
+                className={cn(
+                  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  STATUS_STYLES[truck.status],
+                )}
               >
                 {truck.status.replace(/_/g, " ")}
               </span>
@@ -101,7 +101,10 @@ export const TruckDetailPage = () => {
             <DetailRow label="Name">{truck.name}</DetailRow>
             <DetailRow label="Status">
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[truck.status]}`}
+                className={cn(
+                  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  STATUS_STYLES[truck.status],
+                )}
               >
                 {truck.status.replace(/_/g, " ")}
               </span>

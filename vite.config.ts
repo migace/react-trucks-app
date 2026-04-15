@@ -4,11 +4,12 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { aiProxyPlugin } from "./server/aiProxy";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), aiProxyPlugin()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),

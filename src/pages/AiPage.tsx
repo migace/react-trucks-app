@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { ChatMessage, sendMessage } from "@/ai/fleetAssistant";
-import { env } from "@/env";
+import { cn } from "@/lib/cn";
 
 const SAMPLE_QUESTIONS = [
   "What's the current fleet status summary?",
@@ -9,8 +9,6 @@ const SAMPLE_QUESTIONS = [
   "How many trucks are currently at job?",
   "Show me all trucks that are loading or returning.",
 ];
-
-const hasApiKey = Boolean(env.VITE_OPENAI_API_KEY);
 
 const useTypewriter = (text: string, speed = 12) => {
   const [displayed, setDisplayed] = useState("");
@@ -103,47 +101,8 @@ export const AiPage = () => {
     }
   };
 
-  if (!hasApiKey) {
-    return (
-      <div className="mx-auto max-w-2xl space-y-4 py-16 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-900/30">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-blue-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
-            />
-          </svg>
-        </div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          AI Assistant
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Add your OpenAI API key to{" "}
-          <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-800">
-            .env
-          </code>{" "}
-          to enable the AI assistant.
-        </p>
-        <code className="mx-auto block max-w-sm rounded-xl bg-gray-900 p-4 text-left text-xs text-green-400">
-          VITE_OPENAI_API_KEY=sk-...
-        </code>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="mx-auto flex max-w-3xl flex-col"
-      style={{ height: "calc(100vh - 180px)" }}
-    >
+    <div className="mx-auto flex h-[calc(100vh-180px)] max-w-3xl flex-col">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           AI Fleet Assistant
@@ -163,6 +122,7 @@ export const AiPage = () => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -192,14 +152,18 @@ export const AiPage = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={cn(
+              "flex",
+              msg.role === "user" ? "justify-end" : "justify-start",
+            )}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+              className={cn(
+                "max-w-[80%] rounded-2xl px-4 py-3",
                 msg.role === "user"
                   ? "rounded-br-sm bg-blue-600 text-white"
-                  : "rounded-bl-sm bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-              }`}
+                  : "rounded-bl-sm bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100",
+              )}
             >
               {msg.role === "assistant" && msg.id === latestId ? (
                 <AnimatedMessage content={msg.content} />
@@ -242,8 +206,7 @@ export const AiPage = () => {
           onKeyDown={handleKeyDown}
           placeholder="Ask about your fleet... (Enter to send, Shift+Enter for new line)"
           disabled={isLoading}
-          className="flex-1 resize-none bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 dark:text-gray-100"
-          style={{ maxHeight: "120px" }}
+          className="max-h-30 flex-1 resize-none bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 dark:text-gray-100"
         />
         <button
           onClick={() => send(input)}
@@ -256,6 +219,7 @@ export const AiPage = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"

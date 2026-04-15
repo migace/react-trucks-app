@@ -46,4 +46,3 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: http://localhost:3000
-          VITE_OPENAI_API_KEY: sk-dummy-key-for-build

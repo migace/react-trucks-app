@@ -1,20 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Truck, TruckStatus } from "@/types/truck";
+import { Truck } from "@/types/truck";
 import { useDeleteTruck } from "@/hooks/trucks";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-
-const STATUS_STYLES: Record<TruckStatus, string> = {
-  OUT_OF_SERVICE:
-    "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
-  LOADING:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  TO_JOB: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  AT_JOB:
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  RETURNING:
-    "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-};
+import { cn } from "@/lib/cn";
+import { STATUS_STYLES } from "@/lib/truckStatus";
 
 const COLUMNS = ["Code", "Name", "Status", "Description", "Actions"] as const;
 
@@ -92,7 +82,10 @@ const renderRows = (
       </td>
       <td className="px-4 py-3">
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[truck.status]}`}
+          className={cn(
+            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+            STATUS_STYLES[truck.status],
+          )}
         >
           {truck.status.replace(/_/g, " ")}
         </span>
@@ -140,13 +133,16 @@ export const TrucksList = ({
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Fleet trucks">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-700/50">
                     {COLUMNS.map((col) => (
                       <th
                         key={col}
-                        className={`px-4 py-3 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400 ${col === "Actions" ? "text-right" : "text-left"}`}
+                        className={cn(
+                          "px-4 py-3 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400",
+                          col === "Actions" ? "text-right" : "text-left",
+                        )}
                       >
                         {col}
                       </th>

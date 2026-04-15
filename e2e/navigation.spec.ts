@@ -17,20 +17,19 @@ test.describe("Navigation", () => {
   test("dark mode toggle works", async ({ page }) => {
     await page.goto("/");
 
-    // Find the dark mode toggle button
-    const toggleButton = page.locator("button").filter({ hasText: /🌙|☀️/ });
+    const toggleButton = page.getByRole("button", { name: /mode/i });
+    await expect(toggleButton).toBeVisible();
 
-    if (await toggleButton.isVisible()) {
-      // Check initial state (light mode)
-      const htmlBefore = await page.locator("html").getAttribute("class");
+    // Initial state: light mode
+    await expect(page.locator("html")).not.toHaveClass(/dark/);
 
-      await toggleButton.click();
+    // Toggle to dark mode
+    await toggleButton.click();
+    await expect(page.locator("html")).toHaveClass(/dark/);
 
-      const htmlAfter = await page.locator("html").getAttribute("class");
-
-      // The class should have changed
-      expect(htmlAfter).not.toBe(htmlBefore);
-    }
+    // Toggle back to light mode
+    await toggleButton.click();
+    await expect(page.locator("html")).not.toHaveClass(/dark/);
   });
 
   test("shows active nav link styling", async ({ page }) => {
@@ -40,10 +39,15 @@ test.describe("Navigation", () => {
     await expect(fleetLink).toBeVisible();
   });
 
-  test("404 or unknown routes redirect gracefully", async ({ page }) => {
+  test("404 page shows for unknown routes", async ({ page }) => {
     await page.goto("/unknown-route");
 
-    // Should still render the layout
-    await expect(page.getByText("Fleet Manager")).toBeVisible();
+    await expect(page.getByText("404")).toBeVisible();
+    await expect(
+      page.getByText("The page you're looking for doesn't exist."),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Back to Fleet" }),
+    ).toBeVisible();
   });
 });
