@@ -1,6 +1,7 @@
 import { Truck, TruckStatus } from "@/types/truck";
+import { env } from "@/env";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = env.VITE_API_URL;
 
 export interface CreateTruckPayload {
   code: string;
@@ -15,7 +16,9 @@ export const fetchTrucks = async (): Promise<Truck[]> => {
   return res.json();
 };
 
-export const createTruck = async (payload: CreateTruckPayload): Promise<Truck> => {
+export const createTruck = async (
+  payload: CreateTruckPayload,
+): Promise<Truck> => {
   const res = await fetch(`${API_URL}/trucks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

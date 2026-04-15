@@ -41,7 +41,7 @@ export const ConfirmDialog = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-sm w-full mx-4 border border-gray-200 dark:border-gray-700"
+        className="relative mx-4 w-full max-w-sm rounded-xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800"
       >
         <h3
           id="dialog-title"
@@ -56,14 +56,14 @@ export const ConfirmDialog = ({
           <button
             onClick={onCancel}
             disabled={isPending}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isPending}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-red-600 hover:bg-red-700 active:bg-red-800 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 active:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? "Deleting..." : confirmLabel}
           </button>

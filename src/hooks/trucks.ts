@@ -1,6 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createTruck, deleteTruck, fetchTruck, fetchTrucks, CreateTruckPayload } from "@/api/trucks";
+import {
+  createTruck,
+  deleteTruck,
+  fetchTruck,
+  fetchTrucks,
+  CreateTruckPayload,
+} from "@/api/trucks";
 import { Truck } from "@/types/truck";
 
 export const TRUCKS_QUERY_KEY = ["trucks"] as const;
@@ -31,7 +37,9 @@ export const useTruck = (id: string) => {
     queryKey: ["truck", id] as const,
     queryFn: () => fetchTruck(id),
     initialData: () =>
-      queryClient.getQueryData<Truck[]>(TRUCKS_QUERY_KEY)?.find((t) => t.id === id),
+      queryClient
+        .getQueryData<Truck[]>(TRUCKS_QUERY_KEY)
+        ?.find((t) => t.id === id),
     initialDataUpdatedAt: () =>
       queryClient.getQueryState(TRUCKS_QUERY_KEY)?.dataUpdatedAt,
   });
