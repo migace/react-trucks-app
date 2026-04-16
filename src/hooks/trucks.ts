@@ -10,6 +10,7 @@ import {
 import { Truck } from "@/types/truck";
 
 export const TRUCKS_QUERY_KEY = ["trucks"] as const;
+export const truckQueryKey = (id: string) => ["truck", id] as const;
 
 export const useTrucks = () =>
   useQuery({
@@ -34,7 +35,7 @@ export const useAddTruck = () => {
 export const useTruck = (id: string) => {
   const queryClient = useQueryClient();
   return useQuery({
-    queryKey: ["truck", id] as const,
+    queryKey: truckQueryKey(id),
     queryFn: () => fetchTruck(id),
     initialData: () =>
       queryClient

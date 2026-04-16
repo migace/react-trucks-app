@@ -47,7 +47,10 @@ export interface ChatMessage {
   content: string;
 }
 
-export const sendMessage = async (history: ChatMessage[]): Promise<string> => {
+export const sendMessage = async (
+  history: ChatMessage[],
+  signal?: AbortSignal,
+): Promise<string> => {
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
     ...history.map((m) => ({ role: m.role, content: m.content })),
@@ -57,6 +60,7 @@ export const sendMessage = async (history: ChatMessage[]): Promise<string> => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages, tools }),
+    signal,
   });
 
   if (!res.ok) {

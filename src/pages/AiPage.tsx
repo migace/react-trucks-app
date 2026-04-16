@@ -10,27 +10,7 @@ const SAMPLE_QUESTIONS = [
   "Show me all trucks that are loading or returning.",
 ];
 
-const useTypewriter = (text: string, speed = 12) => {
-  const [displayed, setDisplayed] = useState("");
-
-  useEffect(() => {
-    if (!text) return;
-    setDisplayed("");
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayed(text.slice(0, i + 1));
-      i++;
-      if (i >= text.length) clearInterval(interval);
-    }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed]);
-
-  return displayed;
-};
-
-interface AnimatedMessageProps {
-  content: string;
-}
+const MAX_HISTORY_MESSAGES = 40;
 
 const MarkdownContent = ({ content }: { content: string }) => (
   <div className="prose prose-sm dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-strong:font-semibold max-w-none text-sm leading-relaxed">
@@ -38,9 +18,38 @@ const MarkdownContent = ({ content }: { content: string }) => (
   </div>
 );
 
-const AnimatedMessage = ({ content }: AnimatedMessageProps) => {
-  const displayed = useTypewriter(content);
-  return <MarkdownContent content={displayed} />;
+const AnimatedMessage = ({ content }: { content: string }) => {
+  const [done, setDone] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!content) return;
+    setDone(false);
+
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      if (containerRef.current) {
+        containerRef.current.textContent = content.slice(0, i);
+      }
+      if (i >= content.length) {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, 12);
+    return () => clearInterval(interval);
+  }, [content]);
+
+  if (done) {
+    return <MarkdownContent content={content} />;
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="max-w-none text-sm leading-relaxed whitespace-pre-wrap"
+    />
+  );
 };
 
 export const AiPage = () => {
@@ -50,10 +59,15 @@ export const AiPage = () => {
   const [latestId, setLatestId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
 
   const send = async (text: string) => {
     const trimmed = text.trim();
@@ -70,8 +84,14 @@ export const AiPage = () => {
     setInput("");
     setIsLoading(true);
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const historyForApi = nextHistory.slice(-MAX_HISTORY_MESSAGES);
+
     try {
-      const response = await sendMessage(nextHistory);
+      const response = await sendMessage(historyForApi, controller.signal);
       const assistantMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
@@ -79,7 +99,8 @@ export const AiPage = () => {
       };
       setMessages([...nextHistory, assistantMsg]);
       setLatestId(assistantMsg.id);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       const errorMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
@@ -211,6 +232,7 @@ export const AiPage = () => {
         <button
           onClick={() => send(input)}
           disabled={isLoading || !input.trim()}
+          aria-label="Send message"
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <svg

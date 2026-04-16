@@ -3,6 +3,14 @@ import { Outlet, NavLink } from "react-router-dom";
 import { useFleetStore } from "@/store/fleetStore";
 import { cn } from "@/lib/cn";
 
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+    isActive
+      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100",
+  );
+
 export const Layout = () => {
   const { darkMode, toggleDarkMode } = useFleetStore();
 
@@ -25,44 +33,13 @@ export const Layout = () => {
 
           <div className="flex items-center gap-3">
             <nav className="flex items-center gap-1">
-              <NavLink
-                to="/"
-                end
-                className={({ isActive }) =>
-                  cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100",
-                  )
-                }
-              >
+              <NavLink to="/" end className={navLinkClass}>
                 Fleet
               </NavLink>
-              <NavLink
-                to="/trucks/new"
-                className={({ isActive }) =>
-                  cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100",
-                  )
-                }
-              >
+              <NavLink to="/trucks/new" className={navLinkClass}>
                 Add Truck
               </NavLink>
-              <NavLink
-                to="/ai"
-                className={({ isActive }) =>
-                  cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100",
-                  )
-                }
-              >
+              <NavLink to="/ai" className={navLinkClass}>
                 AI Assistant
               </NavLink>
             </nav>

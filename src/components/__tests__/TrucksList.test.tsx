@@ -40,7 +40,7 @@ describe("TrucksList", () => {
 
     expect(screen.getByText("TRK-001")).toBeInTheDocument();
     expect(screen.getByText("Volvo FH16")).toBeInTheDocument();
-    expect(screen.getByText("AT JOB")).toBeInTheDocument();
+    expect(screen.getByText("At Job")).toBeInTheDocument();
     expect(screen.getByText("Main delivery truck")).toBeInTheDocument();
 
     expect(screen.getByText("TRK-002")).toBeInTheDocument();

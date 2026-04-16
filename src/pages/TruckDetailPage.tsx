@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { useTruck } from "@/hooks/trucks";
 import { cn } from "@/lib/cn";
-import { STATUS_STYLES } from "@/lib/truckStatus";
+import { STATUS_LABELS, STATUS_STYLES } from "@/lib/truckStatus";
 
 const DetailRow = ({
   label,
@@ -89,7 +89,7 @@ const TruckDetail = ({ id }: { id: string }) => {
                   STATUS_STYLES[truck.status],
                 )}
               >
-                {truck.status.replace(/_/g, " ")}
+                {STATUS_LABELS[truck.status]}
               </span>
             </div>
           </div>
@@ -106,7 +106,7 @@ const TruckDetail = ({ id }: { id: string }) => {
                   STATUS_STYLES[truck.status],
                 )}
               >
-                {truck.status.replace(/_/g, " ")}
+                {STATUS_LABELS[truck.status]}
               </span>
             </DetailRow>
             <DetailRow label="Description">

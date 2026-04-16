@@ -32,7 +32,11 @@ describe("ConfirmDialog", () => {
     render(<ConfirmDialog {...defaultProps} />);
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-modal", "true");
-    expect(dialog).toHaveAttribute("aria-labelledby", "dialog-title");
+    const labelledBy = dialog.getAttribute("aria-labelledby");
+    expect(labelledBy).toBeTruthy();
+    expect(document.getElementById(labelledBy!)).toHaveTextContent(
+      "Delete Truck",
+    );
   });
 
   it("calls onCancel when Cancel button is clicked", async () => {

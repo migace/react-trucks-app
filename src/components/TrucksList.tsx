@@ -4,7 +4,7 @@ import { Truck } from "@/types/truck";
 import { useDeleteTruck } from "@/hooks/trucks";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { cn } from "@/lib/cn";
-import { STATUS_STYLES } from "@/lib/truckStatus";
+import { STATUS_LABELS, STATUS_STYLES } from "@/lib/truckStatus";
 
 const COLUMNS = ["Code", "Name", "Status", "Description", "Actions"] as const;
 
@@ -87,7 +87,7 @@ const renderRows = (
             STATUS_STYLES[truck.status],
           )}
         >
-          {truck.status.replace(/_/g, " ")}
+          {STATUS_LABELS[truck.status]}
         </span>
       </td>
       <td className="max-w-xs truncate px-4 py-3 text-gray-500 dark:text-gray-400">

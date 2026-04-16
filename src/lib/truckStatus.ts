@@ -12,11 +12,15 @@ export const STATUS_STYLES: Record<TruckStatus, string> = {
     "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
-export const FILTER_LABELS: Record<TruckStatus | "ALL", string> = {
-  ALL: "All",
+export const STATUS_LABELS: Record<TruckStatus, string> = {
   OUT_OF_SERVICE: "Out of Service",
   LOADING: "Loading",
   TO_JOB: "To Job",
   AT_JOB: "At Job",
   RETURNING: "Returning",
+};
+
+export const FILTER_LABELS: Record<TruckStatus | "ALL", string> = {
+  ALL: "All",
+  ...STATUS_LABELS,
 };

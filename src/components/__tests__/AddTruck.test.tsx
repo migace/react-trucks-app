@@ -73,11 +73,11 @@ describe("AddTruck", () => {
     const select = screen.getByLabelText("Status");
 
     expect(select).toBeInTheDocument();
-    expect(screen.getByText("OUT OF SERVICE")).toBeInTheDocument();
-    expect(screen.getByText("LOADING")).toBeInTheDocument();
-    expect(screen.getByText("TO JOB")).toBeInTheDocument();
-    expect(screen.getByText("AT JOB")).toBeInTheDocument();
-    expect(screen.getByText("RETURNING")).toBeInTheDocument();
+    expect(screen.getByText("Out of Service")).toBeInTheDocument();
+    expect(screen.getByText("Loading")).toBeInTheDocument();
+    expect(screen.getByText("To Job")).toBeInTheDocument();
+    expect(screen.getByText("At Job")).toBeInTheDocument();
+    expect(screen.getByText("Returning")).toBeInTheDocument();
   });
 
   it("submits successfully with valid data", async () => {

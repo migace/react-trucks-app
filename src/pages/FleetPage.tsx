@@ -20,10 +20,13 @@ export const FleetPage = () => {
     return counts;
   }, [trucks]);
 
-  const filteredTrucks =
-    statusFilter === "ALL"
-      ? trucks
-      : trucks.filter((t) => t.status === statusFilter);
+  const filteredTrucks = useMemo(
+    () =>
+      statusFilter === "ALL"
+        ? trucks
+        : trucks.filter((t) => t.status === statusFilter),
+    [trucks, statusFilter],
+  );
 
   return (
     <div className="space-y-6">
