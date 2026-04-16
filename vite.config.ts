@@ -9,6 +9,7 @@ import { aiProxyPlugin } from "./server/aiProxy";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  base: process.env.GITHUB_ACTIONS ? "/react-trucks-app/" : "/",
   plugins: [react(), tailwindcss(), aiProxyPlugin()],
   resolve: {
     alias: {

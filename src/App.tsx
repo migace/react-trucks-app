@@ -43,19 +43,24 @@ const AiPageWithSuspense = () => (
   </ErrorBoundary>
 );
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      { index: true, element: <FleetPage /> },
-      { path: "trucks/new", element: <AddTruckPage /> },
-      { path: "trucks/:id", element: <TruckDetailPage /> },
-      { path: "ai", element: <AiPageWithSuspense /> },
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
-]);
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        { index: true, element: <FleetPage /> },
+        { path: "trucks/new", element: <AddTruckPage /> },
+        { path: "trucks/:id", element: <TruckDetailPage /> },
+        { path: "ai", element: <AiPageWithSuspense /> },
+        { path: "*", element: <NotFoundPage /> },
+      ],
+    },
+  ],
+  { basename },
+);
 
 function App() {
   return <RouterProvider router={router} />;
