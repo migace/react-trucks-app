@@ -2,8 +2,6 @@
 
 > Full-stack fleet management dashboard with AI-powered assistant, built with React 18 and TypeScript.
 
-**[Live Demo](https://migace.github.io/react-trucks-app/)**
-
 [![CI](https://github.com/migace/react-trucks-app/actions/workflows/ci.yml/badge.svg)](https://github.com/migace/react-trucks-app/actions/workflows/ci.yml)
 [![Deploy](https://github.com/migace/react-trucks-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/migace/react-trucks-app/actions/workflows/deploy.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)

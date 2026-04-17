@@ -32,7 +32,7 @@ export const truckSchema = z.object({
 export type TruckFormData = z.infer<typeof truckSchema>;
 
 export const truckResponseSchema = z.object({
-  id: z.string(),
+  id: z.coerce.string(),
   code: z.string(),
   name: z.string(),
   status: truckStatusSchema,
