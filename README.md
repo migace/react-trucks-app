@@ -8,7 +8,7 @@
 ![Node](https://img.shields.io/badge/Node-22%20LTS-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-![Fleet Manager Screenshot](./docs/screenshot.png)
+<img width="1193" height="622" alt="Screenshot 2026-04-17 at 19 23 18" src="https://github.com/user-attachments/assets/f44167f0-4cd8-457f-9738-6bf461ecb833" />
 
 ## Features
 
